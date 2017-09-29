@@ -73,12 +73,12 @@ avgiter=np.zeros(30)
 for k in range(0,30):#Runs the different algorithms, and the different parameters
     for l in range(0,10):#Runs 10 times each algorithm for an average
         chromosomes = list()
-        for i in range(0, 16):
+        for i in range(0, 16): #creates the initial generation and respective fitness information
             phi = np.asarray(np.ceil(np.random.rand(4) * 15), int)
             chromosomes.append(makeChromosome(phi))
             fitness[i] = goalFunction(function(dataX, phi))
         j = 0
-        if k%10>4:
+        if k%10>4: #decides which mutation function to use
             print("\nSolving the equation with a genetic algorithm using the multiple mutations function, with parameters:")
         else :
             print("\nSolving the equation with a genetic algorithm using the single mutation function, with parameters:")
@@ -88,50 +88,48 @@ for k in range(0,30):#Runs the different algorithms, and the different parameter
         print("Starting Chromosomes:")
         for z in chromosomes :
             print(str(z.to01()))
-
-
-        while j<iterlimit and not any(limit[int(k/10)] > fitness):
-            invertedFitness=max(fitness)-fitness
-            normFitness = invertedFitness / sum(invertedFitness)
+        while j<iterlimit and not any(limit[int(k/10)] > fitness): #cycle while there is no value below the chosen limit or iteration limit hasnt been reached
+            invertedFitness=max(fitness)-fitness #To minimize instead of maximize
+            normFitness = invertedFitness / sum(invertedFitness) #normalize to get probabilities
             parentPairs = list()
             newGen = list()
-            for i in range(0, 16):
+            for i in range(0, 16): #Gets the random index based on the probabilities and sets up the 8 pairs of parents
                 index = np.random.choice(16, p=normFitness)
                 parentPairs.append(chromosomes[index])
-            for i in range(0, 8):
-                if np.random.rand(1) < sexrand[k%5]:
-                    crosspoint = int(np.ceil(np.random.rand(1) * 3))
-                    child1, child2 = crossOver(parentPairs[i * 2], parentPairs[i * 2 + 1], crosspoint)
-                    if np.random.rand(1) < xmenrand[k%5]:
-                        if k/10<5:
+            for i in range(0, 8): #For every pair it will create the new generation
+                if np.random.rand(1) < sexrand[k%5]: # probability check to see if they reproduce
+                    crosspoint = int(np.ceil(np.random.rand(1) * 3)) #Random crosspoint (will be one of the 4 variables)
+                    child1, child2 = crossOver(parentPairs[i * 2], parentPairs[i * 2 + 1], crosspoint) #Crossover function
+                    if np.random.rand(1) < xmenrand[k%5]:#Mutation probability check
+                        if k/10<5: #Chooses which mutation function
                             child1 = mutateMultiple(child1)
                         else:
                             child1 = mutateOne(child1)
-                    if np.random.rand(1) < xmenrand[k%5]:
+                    if np.random.rand(1) < xmenrand[k%5]:#Same but for the second child
                         if k/10 < 5:
                             child2 = mutateMultiple(child2)
                         else:
                             child2 = mutateOne(child2)
                     newGen.append(child1)
                     newGen.append(child2)
-                else:
+                else: #if they dont reproduce, parents are kept
                     newGen.append(parentPairs[i * 2])
                     newGen.append(parentPairs[i * 2 + 1])
-            for i in newGen:
+            for i in newGen:#Calculates fitness functions of the new generation for the next iteration
                 phi=makeInts(i)
                 fitness[i] = goalFunction(function(dataX, phi))
             j += 1
-        index=fitness.argmin()
-        solution=makeInts(newGen[index])
-        error=fitness[index]
-        if error<bestError:
+        index=fitness.argmin() #Finds the minimum fitness in the 16 chromosomes
+        solution=makeInts(newGen[index]) #Gets the solution=phi
+        error=fitness[index] #Gets the Min. Err value of that solution
+        if error<bestError: #Updates the best solution yet if it is better
             bestError=error
             bestSolution=solution
         print("\nBest Chromosome:" +str(newGen[index].to01()))
         print("Final Phi: "+str(solution))
         print("Final Min. Error Value: "+str(fitness[index]))
         print("Iterations: "+str(j))
-        avg[k]+=error
+        avg[k]+=error #For the avg
         avgiter[k]+= j
 for k in range (0,3):
     for j in range(0,5):
