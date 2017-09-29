@@ -69,9 +69,10 @@ bestError=10000
 avg=np.zeros(30)
 avgiter=np.zeros(30)
 
+runs=10#Amount of runs to average
 
 for k in range(0,30):#Runs the different algorithms, and the different parameters
-    for l in range(0,10):#Runs 10 times each algorithm for an average
+    for l in range(0,runs):#Runs 10 times each algorithm for an average
         chromosomes = list()
         for i in range(0, 16): #creates the initial generation and respective fitness information
             phi = np.asarray(np.ceil(np.random.rand(4) * 15), int)
@@ -137,15 +138,15 @@ for k in range (0,3):
         print("Reproduction Probability: " + str(sexrand[j]))
         print("Mutation Probability: " + str(xmenrand[j]))
         print("Minimum Limit: " + str(limit[k]))
-        print("Average Min Value: " + str(avg[k*10+j]/10))
-        print("Average Iterations: " + str(avgiter[k * 10 + j] / 10))
+        print("Average Min Value: " + str(avg[k*10+j]/runs))
+        print("Average Iterations: " + str(avgiter[k * 10 + j] / runs))
     for j in range(0, 5):
         print("\nAverage Min Value using the multiple mutations function and the following parameters:")
         print("Reproduction Probability: " + str(sexrand[j]))
         print("Mutation Probability: " + str(xmenrand[j]))
         print("Minimum Limit: " + str(limit[k]))
-        print("Average Min Value: " + str(avg[k*10+j+5]/10))
-        print("Average Iterations: " + str(avgiter[k * 10 + j] / 10))
+        print("Average Min Value: " + str(avg[k*10+j+5]/runs))
+        print("Average Iterations: " + str(avgiter[k * 10 + j] / runs))
 
 print("\nBest Chromosome through all iterations:" + str(makeChromosome(bestSolution).to01()))
 print("Best Phi: " + str(bestSolution))
